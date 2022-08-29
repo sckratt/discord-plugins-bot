@@ -1,4 +1,4 @@
-const { Client, SlashCommandBuilder, REST, Routes } = require('discord.js');
+const { Client, SlashCommandBuilder, REST, Routes, Collection } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 /**
@@ -11,6 +11,7 @@ async function loadCommands(client) {
  * @param {Client} client 
  */
 async function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins")) {
+    client.commands = new Array();
     let commands = [];
     fs.readdirSync(dirname)
     .filter(folder => 
@@ -29,6 +30,11 @@ async function loadPluginsCommands(client, dirname = path.join(process.cwd(), "p
         ) {
             const command = require("./" + path.relative(__dirname, path.join(dirname, folder, "commands", commandfilename)));
             Command.addSubcommand(() => command.render())
+            client.commands.push({
+                groupname: Command.name,
+                name: command.render().name,
+                execute: command.execute
+            });
         };
         commands.push(Command);
     });
