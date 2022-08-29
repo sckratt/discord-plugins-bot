@@ -2,13 +2,13 @@ const { Client, SlashCommandBuilder, REST, Routes, Collection } = require('disco
 const fs = require('fs');
 const path = require('path');
 
-client.commands = [];
 let commands = [];
 
 /**
  * @param {Client} client 
  */
 function loadCommands(client, dirname = path.join(__dirname, "../commands")) {
+    if(!client.commands) client.commands = [];
     fs.readdirSync(dirname)
     .forEach(file => {
         if( fs.statSync(path.join(dirname, file)).isDirectory() ) return loadCommands(client, path.join(dirname, file));
@@ -26,6 +26,7 @@ function loadCommands(client, dirname = path.join(__dirname, "../commands")) {
 * @param {Client} client 
 */
 function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins")) {
+    if(!client.commands) client.commands = [];
    fs.readdirSync(dirname)
    .filter(folder => 
        fs.statSync(path.join(dirname, folder)).isDirectory() &&
@@ -56,6 +57,7 @@ function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins
 * @param {Client} client 
 */
 async function deployCommands(client) {
+    if(!client.commands) client.commands = [];
     const rest = new REST({ version: "10" }).setToken(client.token);
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands...`);
