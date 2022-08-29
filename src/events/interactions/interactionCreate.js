@@ -5,7 +5,7 @@ const { Client, Interaction, InteractionType } = require('discord.js');
  * @param {Interaction} interaction
  */
 module.exports = async (client, interaction) => {
-    console.log(interaction.type);
+    
     if(interaction.type === InteractionType.ApplicationCommand) {
         try {
             const subcommandname = interaction.options.getSubcommand();
