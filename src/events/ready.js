@@ -5,5 +5,7 @@ const { Client } = require('discord.js');
  */
 module.exports = async (client) => {
     console.log(`Logged in as ${client.user.tag}`);
-    // await require('../Handler/commands').loadPluginsCommands(client);
+    require('../Handler/commands').loadPluginsCommands(client);
+    require('../Handler/commands').loadCommands(client);
+    await require('../Handler/commands').deployCommands(client);
 };
