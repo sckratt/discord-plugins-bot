@@ -1,3 +1,6 @@
+# Files
+plugins/
+
 # Logs
 logs
 *.log

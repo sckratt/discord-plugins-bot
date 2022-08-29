@@ -17,4 +17,15 @@ function loadEvents(client, dirname = path.resolve(__dirname, "../events")) {
     });
 };
 
-module.exports = { loadEvents };
+function loadPluginsEvents(client, dirname = path.resolve(process.cwd(), "plugins")) {
+    fs.readdirSync(dirname)
+    .forEach(file => {
+        if( fs.statSync(path.join(dirname, file)).isDirectory() ) return loadPluginsEvents(client, path.join(dirname, file));
+        client.on(
+            file.split(".js").shift().toLowerCase(),
+            (...args) => require( "./" + path.relative(__dirname, path.join(dirname, file)) )( client, ...args )
+        )
+    });
+};
+
+module.exports = { loadEvents, loadPluginsEvents };

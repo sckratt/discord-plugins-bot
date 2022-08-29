@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "devDependencies": {},
   "scripts": {
-    "start": "node ."
+    "start": "node . --no-warnings"
   },
   "repository": {
     "type": "git",

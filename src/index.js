@@ -12,4 +12,5 @@ const client = new Client({
 
 
 require('./Handler/events.js').loadEvents(client);
+require('./Handler/events.js').loadPluginsEvents(client);
 client.login(process.env.TOKEN);
