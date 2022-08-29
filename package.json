@@ -1,0 +1,25 @@
+{
+  "name": "discord-plugin-bot",
+  "description": "Easy way to have custom bot",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azynux/discord-plugin-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/azynux/discord-plugin-bot/issues"
+  },
+  "homepage": "https://github.com/azynux/discord-plugin-bot#readme",
+  "dependencies": {
+    "discord.js": "^14.3.0",
+    "dotenv": "^16.0.1"
+  }
+}
