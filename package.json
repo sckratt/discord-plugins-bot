@@ -3,7 +3,6 @@
   "description": "Easy way to have custom bot",
   "version": "1.0.0",
   "main": "src/index.js",
-  "devDependencies": {},
   "scripts": {
     "start": "node . --no-warnings"
   },
@@ -19,7 +18,9 @@
   },
   "homepage": "https://github.com/azynux/discord-plugin-bot#readme",
   "dependencies": {
+    "better-sqlite3": "^7.6.2",
     "discord.js": "^14.3.0",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "quick.db": "^9.0.6"
   }
 }
