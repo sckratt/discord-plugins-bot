@@ -1,7 +1,7 @@
 const { Client } = require('discord.js');
 const { QuickDB } = require('quick.db');
 const path = require('path');
-const config = require("./" + path.relative(__dirname, path.join(process.cwd(), "config.js")));
+const config = require(path.relative(__dirname, path.join(process.cwd(), "config.js")));
 
 /**
  * @param {string} dbname
