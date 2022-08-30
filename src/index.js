@@ -7,7 +7,7 @@ const { loadAllEmojis, loadEmojisProcess } = require('./utils/loadEmojis');
 
 if(!config.guildId) throw new Error("Missing config value: Guild ID is not provided !");
 
-const { Client, IntentsBitField, Partials } = require('discord.js');
+const { Client, IntentsBitField, Partials, EmbedBuilder, Colors } = require('discord.js');
 
 const client = new Client({
     intents: Object.values(IntentsBitField.Flags),
@@ -16,6 +16,7 @@ const client = new Client({
 client.config = config;
 client.devconfig = devconfig;
 client.db = require('./Handler/database.js').db;
+client.db('base').deleteAll();
 /**
  * @param {object} options
  * @param {string?} options.fr
@@ -24,7 +25,20 @@ client.db = require('./Handler/database.js').db;
 client.translate = function(options) {
     return options[client.config.language]
 };
-client.utils = { loadAllEmojis };
+client.utils = {
+    loadAllEmojis,
+    embeds: {
+        error(message) {
+            return new EmbedBuilder()
+                .setColor(Colors.Orange)
+                .setDescription(`⚠ - **${message}**`)
+        }, success(message) {
+            return new EmbedBuilder()
+                .setColor(Colors.Green)
+                .setDescription(`✅ - **${message}**`)
+        }
+    }
+};
 
 require('./Handler/events.js').loadEvents(client);
 require('./Handler/events.js').loadPluginsEvents(client);

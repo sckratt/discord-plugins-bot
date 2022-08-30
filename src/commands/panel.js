@@ -20,30 +20,30 @@ module.exports = {
      */
     async execute(client, interaction) {
         try {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply();
 
             const db = client.db("base");
             if(!await db.has("plugins")) await db.set("plugins", {});
             
-            const modules = [{
+            let modules = [{
                 name: "📄 » Base",
                 enabled: true
-            }, null];
-
+            }];
+            let temp_modules = [];
             for( let i=0; i<client.commands.filter(c => c.manifest).length; i++ ) {
                 const { manifest } = client.commands.filter(c => c.manifest)[i];
 
-                if(i%2) modules.push(null);
-
-                if(!await db.has(`plugins.${manifest.commandname}`))
-                    await db.set(`plugins.${manifest.commandname}`, true)
-                
-                modules.push({
-                    name: (manifest.emoji ? manifest.emoji + " » " : "") + "**" + manifest.name + "**",
-                    enabled: await db.get(`plugins.${manifest.commandname}`)
-                });
+                if(!await db.has(`plugins.${manifest.command_name}`))
+                    await db.set(`plugins.${manifest.command_name}`, true)
+                if(!temp_modules.includes(manifest.command_name)) {
+                    temp_modules.push(manifest.command_name);
+                    modules.push({
+                        name: (manifest.emoji ? manifest.emoji + " » " : "") + "**" + manifest.name + "**",
+                        enabled: await db.get(`plugins.${manifest.command_name}`)
+                    });
+                };
             };
-    
+            
             let emojis = [
                 interaction.guild.emojis.cache.find(e => e.name == "enabled")?.toString(),
                 interaction.guild.emojis.cache.find(e => e.name == "disabled")?.toString()
@@ -59,7 +59,7 @@ module.exports = {
                     iconURL: interaction.guild?.iconURL()
                 }).addFields(modules.map(module => ({
                     name: module?.name || "\u200B",
-                    value: module ? module.enabled ? emojis[0] : emojis[1] : "\u200B",
+                    value: (module ? module.enabled ? emojis[0] : emojis[1] : "\u200B") + (module.name === "📄 » Base" ? '🔒' : ""),
                     inline: true
                 }))).setFooter({
                     text: "Asked by: " + interaction.user.tag,
@@ -67,7 +67,7 @@ module.exports = {
                 }).setTimestamp()
     
             const disableButton = new ButtonBuilder()
-                .setCustomId("plugins.disable")
+                .setCustomId(`pluginsManager.disable.${interaction.user.id}`)
                 .setEmoji(emojis[1])
                 .setStyle(ButtonStyle.Secondary)
                 .setLabel(client.translate({
@@ -75,7 +75,7 @@ module.exports = {
                     en: "Disable a plugin"
                 }))
             const enableButton = new ButtonBuilder()
-                .setCustomId("plugins.enable")
+                .setCustomId(`pluginsManager.enable.${interaction.user.id}`)
                 .setEmoji(emojis[0])
                 .setStyle(ButtonStyle.Secondary)
                 .setLabel(client.translate({

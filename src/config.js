@@ -1,3 +1,4 @@
 module.exports = {
-    refreshCommands: false
+    refreshCommands: false,
+    clearDatabaseOnStart: false
 }
