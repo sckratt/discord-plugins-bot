@@ -17,7 +17,8 @@ function loadCommands(client, dirname = path.join(__dirname, "../commands")) {
 
         client.commands.push({
             name: Command.render().name,
-            execute: Command.execute
+            execute: Command.execute,
+            isBaseCommand: true
         });
         commands.push(Command.render());
     });
@@ -48,6 +49,7 @@ function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins
            client.commands.push({
                 commandname: Command.name,
                 name: command.render().name,
+                isBaseCommand: false,
                 manifest, execute: command.execute
            });
        };

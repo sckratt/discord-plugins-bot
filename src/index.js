@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require("../config");
 const devconfig = require("./config");
+const { loadAllEmojis, loadEmojisProcess } = require('./utils/loadEmojis');
 
 if(!config.guildId) throw new Error("Missing config value: Guild ID is not provided !");
 
@@ -23,7 +24,7 @@ client.db = require('./Handler/database.js').db;
 client.translate = function(options) {
     return options[client.config.language]
 };
-
+client.utils = { loadAllEmojis };
 
 require('./Handler/events.js').loadEvents(client);
 require('./Handler/events.js').loadPluginsEvents(client);
