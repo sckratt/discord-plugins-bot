@@ -69,7 +69,7 @@ module.exports = async (client, interaction) => {
                             iconURL: interaction.guild?.iconURL()
                         }).addFields(modules.map(module => ({
                             name: module?.name || "\u200B",
-                            value: (module ? module.enabled ? emojis[0] : emojis[1] : "\u200B") + (module.name === "📄 » Base" ? '🔒' : ""),
+                            value: (module ? module.enabled ? emojis[0] : emojis[1] : "\u200B") + (module.name === "📄 » Base" ? ' 🔒' : ""),
                             inline: true
                         }))).setFooter({
                             text: "Asked by: " + interaction.user.tag,
