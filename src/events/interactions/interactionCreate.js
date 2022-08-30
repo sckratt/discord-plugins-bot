@@ -5,6 +5,7 @@ const { Client, Interaction, InteractionType } = require('discord.js');
  * @param {Interaction} interaction
  */
 module.exports = async (client, interaction) => {
+    if(!interaction.guild || !interaction.guild?.available || interaction.guild?.id !== client.config.guildId) return;
     
     if(interaction.type === InteractionType.ApplicationCommand) {
         try {
