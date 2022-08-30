@@ -1,8 +1,8 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const config = require(path.relative(__dirname, path.join(process.cwd(), "config.js")));
-const devconfig = require(path.relative(__dirname, path.join(process.cwd(), "src/config.js")));
+const config = require("../config");
+const devconfig = require("./config");
 
 if(!config.guildId) throw new Error("Missing config value: Guild ID is not provided !");
 
