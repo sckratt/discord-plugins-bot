@@ -8,7 +8,7 @@ const client = new Client({
     intents: Object.values(IntentsBitField.Flags),
     partials: Object.values(Partials)
 });
-
+client.db = require('./Handler/database.js').db;
 
 
 require('./Handler/events.js').loadEvents(client);
