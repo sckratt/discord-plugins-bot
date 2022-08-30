@@ -34,7 +34,7 @@ function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins
    ).forEach(folder => {
        const manifest = require('./' + path.relative(__dirname, path.join(dirname, folder, "manifest.json")));
        const Command = new SlashCommandBuilder()
-           .setName(manifest.group_name)
+           .setName(manifest.command_name)
            .setDescription(manifest.description || manifest.name)
            .setDescriptionLocalizations(manifest.description_localizations)
        for(
@@ -45,9 +45,10 @@ function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins
            const command = require("./" + path.relative(__dirname, path.join(dirname, folder, "commands", commandfilename)));
            Command.addSubcommand(() => command.render())
            client.commands.push({
-               groupname: Command.name,
-               name: command.render().name,
-               execute: command.execute
+                foldername: folder,
+                commandname: Command.name,
+                name: command.render().name,
+                execute: command.execute
            });
        };
        commands.push(Command);
