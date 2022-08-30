@@ -18,7 +18,7 @@ client.db = require('./Handler/database.js').db;
  * @param {string?} options.fr
  * @param {string?} options.en 
  */
-client.tranlate = function(options) {
+client.translate = function(options) {
     return options[client.config.language]
 };
 

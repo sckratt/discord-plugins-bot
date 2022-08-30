@@ -23,7 +23,7 @@ module.exports = async (client) => {
                 console.log("Creating enabled emoji in your server for the panel command...");
                 await guild.emojis.create({
                     name: "enabled", reason: "Plugins Bot - Panel command",
-                    attachment: path.relative(__dirname, path.resolve(process.cwd(), "assets/enabled.png"))
+                    attachment: path.resolve(process.cwd(), "assets/enabled.png")
                 });
                 console.log("Enabled emoji created !");
             };
@@ -34,7 +34,7 @@ module.exports = async (client) => {
                 console.log("Creating disabled emoji in your server for the panel command...");
                 await guild.emojis.create({
                     name: "disabled", reason: "Plugins Bot - Panel command",
-                    attachment: path.relative(__dirname, path.resolve(process.cwd(), "assets/enabled.png"))
+                    attachment: path.resolve(process.cwd(), "assets/disabled.png")
                 });
                 console.log("Disabled emoji created !");
             };
