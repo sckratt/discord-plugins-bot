@@ -33,6 +33,7 @@ function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins
        fs.existsSync(path.join(dirname, folder, "commands"))
    ).forEach(folder => {
        const manifest = require('./' + path.relative(__dirname, path.join(dirname, folder, "manifest.json")));
+       if(!manifest) throw new Error(`Missing manifest: ${folder} Plugin`);
        const Command = new SlashCommandBuilder()
            .setName(manifest.command_name)
            .setDescription(manifest.description || manifest.name)
