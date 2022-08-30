@@ -104,11 +104,12 @@ module.exports = async (client, interaction) => {
                     ], components: [panelactionrow] })
                 } catch {
                     interaction.editReply({ embeds: [
+                        interaction.message.embeds[0],
                         client.utils.embeds.error(client.translate({
                             fr: `Vous n'avez aucun plugin à ` + (action == `enable` ? `activer` : `désactiver`) + `.`,
                             en: `You have no plugin to ` + action + `.`
                         }))
-                    ], components: [] })
+                    ], components: interaction.message.components })
                 }
 
                 async function pluginChooser() {
@@ -162,10 +163,10 @@ module.exports = async (client, interaction) => {
                         i = inter;
                         await i.deferUpdate();
                     }).catch(async () => {
-                        await msg.edit({ embeds: [ client.utils.embeds.error(client.translate({
+                        await msg.edit({ embeds: [ msg.embeds[0], client.utils.embeds.error(client.translate({
                             fr: "Vous n'avez pas répondu à temps !",
                             en: "You did not answer on time !"
-                        })) ], components: [] })
+                        })) ], components: msg.components })
                     });
                     return { i, resp };
                 };
