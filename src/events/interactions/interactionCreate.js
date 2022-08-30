@@ -1,4 +1,4 @@
-const { Client, Interaction, InteractionType, EmbedBuilder, Colors, ButtonBuilder, ButtonStyle, ActionRowBuilder, SelectMenuBuilder, SelectMenuOptionBuilder } = require('discord.js');
+const { Client, Interaction, InteractionType, EmbedBuilder, Colors, PermissionFlagsBits, ButtonBuilder, ButtonStyle, ActionRowBuilder, SelectMenuBuilder, SelectMenuOptionBuilder } = require('discord.js');
 const { db } = require('../../Handler/database');
 
 /**
@@ -22,6 +22,7 @@ module.exports = async (client, interaction) => {
     if(interaction.type === InteractionType.MessageComponent) {
         if(interaction.isButton()) {
             if(interaction.customId.startsWith("pluginsManager")) {
+                if(!interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) return;
                 const db = client.db('base');
                 if(!await db.has("plugins")) await db.set("plugins", {});
 

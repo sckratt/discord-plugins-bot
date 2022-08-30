@@ -1,4 +1,4 @@
-const { Client, CommandInteraction, SlashCommandSubcommandBuilder, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionsBitField } = require('discord.js');
+const { Client, CommandInteraction, SlashCommandSubcommandBuilder, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionFlagsBits } = require('discord.js');
 const path = require('path');
 
 module.exports = {
@@ -19,6 +19,7 @@ module.exports = {
      * @param {CommandInteraction} interaction 
      */
     async execute(client, interaction) {
+        if(!interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) return;
         try {
             await interaction.deferReply();
 
