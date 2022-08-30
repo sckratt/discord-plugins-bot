@@ -45,10 +45,9 @@ function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins
            const command = require("./" + path.relative(__dirname, path.join(dirname, folder, "commands", commandfilename)));
            Command.addSubcommand(() => command.render())
            client.commands.push({
-                foldername: folder,
                 commandname: Command.name,
                 name: command.render().name,
-                execute: command.execute
+                manifest, execute: command.execute
            });
        };
        commands.push(Command);
