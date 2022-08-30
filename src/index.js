@@ -2,6 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const config = require(path.relative(__dirname, path.join(process.cwd(), "config.js")));
+const devconfig = require(path.relative(__dirname, path.join(process.cwd(), "src/config.js")));
 
 if(!config.guildId) throw new Error("Missing config value: Guild ID is not provided !");
 
@@ -12,6 +13,7 @@ const client = new Client({
     partials: Object.values(Partials)
 });
 client.config = config;
+client.devconfig = devconfig;
 client.db = require('./Handler/database.js').db;
 /**
  * @param {object} options

@@ -10,7 +10,8 @@ module.exports = async (client) => {
     console.log(`Logged in as ${client.user.tag}`);
     require('../Handler/commands').loadPluginsCommands(client);
     require('../Handler/commands').loadCommands(client);
-    await require('../Handler/commands').deployCommands(client);
+    if(client.devconfig.refreshCommands)
+        await require('../Handler/commands').deployCommands(client);
 
     if(!guild || !guild.available)
         console.log("[!] Guild with id " + client.config.guildId + " is not available.");
