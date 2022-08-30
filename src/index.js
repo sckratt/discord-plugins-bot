@@ -16,7 +16,7 @@ const client = new Client({
 client.config = config;
 client.devconfig = devconfig;
 client.db = require('./Handler/database.js').db;
-client.db('base').deleteAll();
+if(client.devconfig.clearDatabaseOnStart) client.db('base').deleteAll();
 /**
  * @param {object} options
  * @param {string?} options.fr
