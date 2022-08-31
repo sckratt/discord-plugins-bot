@@ -109,7 +109,7 @@ module.exports = async (client, interaction) => {
                             fr: `Vous n'avez aucun plugin à ` + (action == `enable` ? `activer` : `désactiver`) + `.`,
                             en: `You have no plugin to ` + action + `.`
                         }))
-                    ], components: interaction.message.components })
+                    ], components: interaction.message.components }).catch(()=>'');
                 }
 
                 async function pluginChooser() {
