@@ -34,7 +34,10 @@ function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins
        fs.existsSync(path.join(dirname, folder, "commands"))
    ).forEach(folder => {
        const manifest = require('./' + path.relative(__dirname, path.join(dirname, folder, "manifest.json")));
-       if(!manifest) throw new Error(`Missing manifest: ${folder} Plugin`);
+       const package = require('./' + path.relative(__dirname, path.join(dirname, folder, "package.json")));
+       if(!manifest) throw new Error(`Missing manifest.json: ${folder}`);
+       if(!package) throw new Error(`Missing package.json: ${folder}`);
+
        const Command = new SlashCommandBuilder()
            .setName(manifest.command_name)
            .setDescription(manifest.description || manifest.name)
@@ -45,12 +48,13 @@ function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins
                .filter(file => fs.statSync(path.join(dirname, folder, "commands", file)).isFile() && file.endsWith(".js") )
        ) {
            const command = require("./" + path.relative(__dirname, path.join(dirname, folder, "commands", commandfilename)));
-           Command.addSubcommand(() => command.render())
+           Command.addSubcommand(() => command.render());
+
            client.commands.push({
                 commandname: Command.name,
                 name: command.render().name,
                 isBaseCommand: false,
-                manifest, execute: command.execute
+                manifest, package, execute: command.execute
            });
        };
        commands.push(Command);
