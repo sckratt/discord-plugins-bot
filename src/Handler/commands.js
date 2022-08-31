@@ -39,7 +39,7 @@ function loadPluginsCommands(client, dirname = path.join(process.cwd(), "plugins
        if(!package) throw new Error(`Missing package.json: ${folder}`);
 
        const Command = new SlashCommandBuilder()
-           .setName(manifest.command_name)
+           .setName(manifest.command_name || folder)
            .setDescription(manifest.description || manifest.name)
            .setDescriptionLocalizations(manifest.description_localizations)
        for(

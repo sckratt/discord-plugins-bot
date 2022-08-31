@@ -2,7 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const config = require("../config");
-const devconfig = require("./config");
+const devconfig = require("./devconfig");
 const { loadAllEmojis, loadEmojisProcess } = require('./utils/loadEmojis');
 
 if(!config.guildId) throw new Error("Missing config value: Guild ID is not provided !");
