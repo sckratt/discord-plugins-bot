@@ -12,10 +12,10 @@ module.exports = async (client, interaction) => {
     if(interaction.type === InteractionType.ApplicationCommand) {
         try {
             const subcommandname = interaction.options.getSubcommand();
-            const execute = client.commands.find(cmd => cmd.name == subcommandname && cmd.groupname == interaction.commandName)?.execute;
+            const execute = client.commands.find(cmd => cmd.name == subcommandname && cmd.commandname == interaction.commandName)?.execute;
             if(typeof execute == "function") execute(client, interaction);
         } catch {
-            const execute = client.commands.find(cmd => cmd.name == interaction.commandName && !cmd.groupname)?.execute;
+            const execute = client.commands.find(cmd => cmd.name == interaction.commandName && !cmd.commandname)?.execute;
             if(typeof execute == "function") execute(client, interaction);
         };
     };
