@@ -6,14 +6,16 @@ const { db } = require('../../Handler/database');
  * @param {Interaction} interaction
  */
 module.exports = async (client, interaction) => {
-    
+    const basedb = client.db("base");
     if(!interaction.guild || !interaction.guild?.available || interaction.guild?.id !== client.config.guildId) return;
     
     if(interaction.type === InteractionType.ApplicationCommand) {
         try {
             const subcommandname = interaction.options.getSubcommand();
-            const execute = client.commands.find(cmd => cmd.name == subcommandname && cmd.commandname == interaction.commandName)?.execute;
-            if(typeof execute == "function") execute(client, interaction);
+            const subcommand = client.commands.find(cmd => cmd.name == subcommandname && cmd.commandname == interaction.commandName);
+            if(!subcommand) return;
+            if(!await basedb.get(`plugins.${subcommand.commandname}`)) return;
+            if(typeof subcommand.execute == "function") execute(client, interaction);
         } catch {
             const execute = client.commands.find(cmd => cmd.name == interaction.commandName && !cmd.commandname)?.execute;
             if(typeof execute == "function") execute(client, interaction);
