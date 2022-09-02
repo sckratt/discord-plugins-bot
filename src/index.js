@@ -29,8 +29,7 @@ client.translate = function(options) {
  * @param {string} plugin_name 
  */
 client.getConfig = function (plugin_name) {
-    const cfg = require(path.relative(__dirname, path.join(process.cwd(), "plugins", plugin_name, "config.js")));
-    return cfg;
+    return client.configs.find(conf => conf.pluginName == plugin_name).config;
 };
 client.utils = {
     loadAllEmojis,
