@@ -15,7 +15,7 @@ module.exports = async (client, interaction) => {
             const subcommand = client.commands.find(cmd => cmd.name == subcommandname && cmd.commandname == interaction.commandName);
             if(!subcommand) return;
             if(!await basedb.get(`plugins.${subcommand.commandname}`)) return;
-            if(typeof subcommand.execute == "function") execute(client, interaction);
+            if(typeof subcommand.execute == "function") subcommand.execute(client, interaction);
         } catch {
             const execute = client.commands.find(cmd => cmd.name == interaction.commandName && !cmd.commandname)?.execute;
             if(typeof execute == "function") execute(client, interaction);

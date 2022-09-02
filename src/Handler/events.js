@@ -21,27 +21,43 @@ function loadEvents(client, dirname = path.join(__dirname, "../events")) {
 /**
  * @param {Client} client 
  */
-function loadPluginsEvents(client, dirname = path.resolve(process.cwd(), "plugins"), pluginName = "") {
-    fs.readdirSync(dirname)
-    .forEach(file => {
-        if( fs.statSync(path.join(dirname, file)).isDirectory() ) return loadPluginsEvents(client, path.join(dirname, file), pluginName ? pluginName : file);
-        const pluginManifest = require(path.relative(__dirname, path.join(dirname.split(pluginName)[0], pluginName, "manifest.json")));
-        client.events.push({
-            name: file.split(".js").shift(),
-            pluginName: pluginManifest.command_name,
-            execute: require( "./" + path.relative(__dirname, path.join(dirname, file)) )
-        });
-    });
+ function loadPluginsEvents(client, dirname = path.join(process.cwd(), "plugins")) {
+    if(!client.events) client.events = [];
+   fs.readdirSync(dirname)
+   .filter(folder => 
+       fs.statSync(path.join(dirname, folder)).isDirectory() &&
+       fs.existsSync(path.join(dirname, folder, "events"))
+   ).forEach(folder => {
+       const manifest = require('./' + path.relative(__dirname, path.join(dirname, folder, "manifest.json")));
+       if(!manifest) throw new Error(`Missing manifest.json: ${folder}`);
+       
+       _(folder, manifest);
+   });
+
+    function _(pluginName, manifest, eventdir = "events") {
+        const dir = path.join(process.cwd(), "plugins", pluginName, eventdir);
+        fs.readdirSync(dir)
+        .forEach(f => {
+            if( fs.statSync(path.join(dir, f)).isDirectory() ) return _(pluginName, eventdir + "/" + f);
+            const event = require(path.relative(__dirname, path.join(dir, f)));
+            const eventObj = {
+                name: f.split(".js").shift(),
+                pluginName: manifest.command_name,
+                execute: event
+            }; client.events.push(eventObj);
+        })
+    };
 };
 
 /**
  * @param {Client} client 
  */
-function pushEvents(client) {
+async function pushEvents(client) {
+    const db = client.db("base");
     for(let event of client.events) {
+        const pluginActive = await db.get(`plugins.${event.pluginName}`);
         client.on(event.name, async (...args) => {
-            const db = client.db("base");
-            if(!await db.get(`plugins.${event.pluginName}`)) return;
+            if(event.pluginName && !pluginActive) return;
             event.execute(client, ...args);
         });
     };
