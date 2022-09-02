@@ -25,12 +25,6 @@ if(client.devconfig.clearDatabaseOnStart) client.db('base').deleteAll();
 client.translate = function(options) {
     return options[client.config.language]
 };
-/**
- * @param {string} plugin_name 
- */
-client.getConfig = function (plugin_name) {
-    return client.configs.find(conf => conf.pluginName == plugin_name).config;
-};
 client.utils = {
     loadAllEmojis,
     embeds: {
