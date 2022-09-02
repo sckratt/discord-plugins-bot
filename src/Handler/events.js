@@ -38,7 +38,7 @@ function loadEvents(client, dirname = path.join(__dirname, "../events")) {
         const dir = path.join(process.cwd(), "plugins", pluginName, eventdir);
         fs.readdirSync(dir)
         .forEach(f => {
-            if( fs.statSync(path.join(dir, f)).isDirectory() ) return _(pluginName, eventdir + "/" + f);
+            if( fs.statSync(path.join(dir, f)).isDirectory() ) return _(pluginName, manifest, eventdir + "/" + f);
             const event = require(path.relative(__dirname, path.join(dir, f)));
             const eventObj = {
                 name: f.split(".js").shift(),
