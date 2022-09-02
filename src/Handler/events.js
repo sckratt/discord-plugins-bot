@@ -23,6 +23,7 @@ function loadEvents(client, dirname = path.join(__dirname, "../events")) {
  */
  function loadPluginsEvents(client, dirname = path.join(process.cwd(), "plugins")) {
     if(!client.events) client.events = [];
+    if(!client.configs) client.configs = [];
    fs.readdirSync(dirname)
    .filter(folder => 
        fs.statSync(path.join(dirname, folder)).isDirectory() &&
@@ -30,6 +31,10 @@ function loadEvents(client, dirname = path.join(__dirname, "../events")) {
    ).forEach(folder => {
        const manifest = require('./' + path.relative(__dirname, path.join(dirname, folder, "manifest.json")));
        if(!manifest) throw new Error(`Missing manifest.json: ${folder}`);
+
+       if(fs.existsSync(path.join(dirname, folder, "config.js"))) {
+            client.configs.push({ pluginName: folder, config: require(path.relative(__dirname, path.join(dirname, folder, "config.js"))) });
+       };
        
        _(folder, manifest);
    });
