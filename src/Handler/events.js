@@ -25,7 +25,7 @@ function loadPluginsEvents(client, dirname = path.resolve(process.cwd(), "plugin
     fs.readdirSync(dirname)
     .forEach(file => {
         if( fs.statSync(path.join(dirname, file)).isDirectory() ) return loadPluginsEvents(client, path.join(dirname, file), pluginName ? pluginName : file);
-        const pluginManifest = require(path.relative(__dirname, path.join(dirname, pluginName, "manifest.json")));
+        const pluginManifest = require(path.relative(__dirname, path.join(dirname.split(pluginName)[0], pluginName, "manifest.json")));
         client.events.push({
             name: file.split(".js").shift(),
             pluginName: pluginManifest.command_name,
