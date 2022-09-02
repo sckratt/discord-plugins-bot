@@ -1,4 +1,4 @@
-const { Client, CommandInteraction, SlashCommandSubcommandBuilder, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionFlagsBits } = require('discord.js');
+const { Client, CommandInteraction, SlashCommandSubcommandBuilder, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionFlagsBits, Colors } = require('discord.js');
 const path = require('path');
 
 module.exports = {
@@ -52,6 +52,7 @@ module.exports = {
             if(!emojis[0] || !emojis[1]) emojis = ["✅", "❌"];
             
             const panel = new EmbedBuilder()
+                .setColor(Colors.Blue)
                 .setAuthor({
                     name: client.translate({
                         fr: `${interaction.guild?.name} - Etat des plugin`,
