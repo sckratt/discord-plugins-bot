@@ -1,0 +1,9 @@
+{
+    "command_name": "invites",
+    "name": "Invite Logger",
+    "emoji": "📨",
+    "description": "Guild invites manager | logger and counter",
+    "description_localizations": {
+        "fr": "Gestionnaire d'invitations | traque et compte"
+    }
+}
