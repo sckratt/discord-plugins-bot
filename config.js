@@ -1,5 +1,5 @@
 module.exports = {
-    "guildId": "950326710660890685",
+    "guildId": "",
     "loadEmojis": true,
     "language": "en"
 }

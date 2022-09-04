@@ -1,5 +1,5 @@
 module.exports = {
-    channelId:                  "950462493308895293",
+    channelId:                  "",
     message: {
         joined: {
             "success":          "> {@user} has joined ; Invited by **{@inviter}** ; Who has now **{inviteCount}** invites.",
