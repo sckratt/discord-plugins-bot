@@ -1,4 +1,4 @@
-# discord plugin bot
+# discord plugins bot
 # Check the guide with the link below
 ## [https://docs.plugins-bot.tk](https://docs.plugins-bot.tk)
 
