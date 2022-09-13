@@ -12,11 +12,12 @@ module.exports = async (client, member) => {
     
     try {
         var invitesdb = Object.values(await db.get("invites"));
-        var invite = (await member.guild.invites.fetch())
-            .find(i => {
-                let invitedb = invitesdb.find(idb => idb.code == (isVanity(i) ? "vanity" : i.code));
-                return invitedb && i.uses > invitedb.uses;
-            });
+        const fetchedInvites = await member.guild.invites.fetch();
+        var invite = fetchedInvites.find(i => {
+            let invitedb = invitesdb.find(idb => idb.code == (isVanity(i) ? "vanity" : i.code));
+            return invitedb && i.uses > invitedb.uses;
+        });
+        await db.set("invites", fetchedInvites.map(i => ({ inviterId: i.inviterId, code: i.code, uses: i.uses })));
     } catch (err) {
         console.error(err);
         throw new Error(client.translate({
