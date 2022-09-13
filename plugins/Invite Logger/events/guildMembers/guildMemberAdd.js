@@ -17,7 +17,13 @@ module.exports = async (client, member) => {
             let invitedb = invitesdb.find(idb => idb.code == (isVanity(i) ? "vanity" : i.code));
             return invitedb && i.uses > invitedb.uses;
         });
-        await db.set("invites", fetchedInvites.map(i => ({ inviterId: i.inviterId, code: i.code, uses: i.uses })));
+        fetchedInvites.forEach(i => {
+            db.set(`invites.${isVanity(i) ? "vanity" : i.code}`, {
+                inviterId: i.inviterId,
+                code: i.code,
+                uses: i.uses
+            });
+        });
     } catch (err) {
         console.error(err);
         throw new Error(client.translate({
