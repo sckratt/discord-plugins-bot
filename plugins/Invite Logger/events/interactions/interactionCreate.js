@@ -162,6 +162,8 @@ module.exports = async (client, interaction) => {
                         .filter(u => u.joins.filter(j => j.by == member.user.id).length)
                         .forEach(u => lastInvitedMembers.push(u))
         
+                    lastInvitedMembers.sort((a,b) => b.joins[b.joins.length-1].at - a.join[a.join.length-1].at);
+                    
                     for(let i=0; i<lastInvitedMembers.length; i++) {
                         const u = lastInvitedMembers[i];
                         const user = client.users.cache.get(u.id) || await client.users.fetch(u.id).catch(()=>'');
@@ -169,8 +171,6 @@ module.exports = async (client, interaction) => {
                         lastInvitedMembers[i] = { mInvites: u, user, type };
                     };
         
-                    lastInvitedMembers.sort((a,b) => b.joins[b.joins.length-1].at - a.join[a.join.length-1].at);
-                    
                     const embed = new EmbedBuilder()
                         .setColor(Colors.Blue)
                         .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL() })
