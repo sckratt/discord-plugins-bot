@@ -41,7 +41,7 @@ client.utils = {
 };
 
 
-require('./Handler/modulesState').then(() => {
+require('./Handler/modulesState')(client).then(() => {
     require('./Handler/modules');
     require('./Handler/events.js').loadEvents(client);
     require('./Handler/events.js').loadPluginsEvents(client);
