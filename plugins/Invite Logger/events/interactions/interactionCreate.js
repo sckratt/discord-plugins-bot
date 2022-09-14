@@ -1,4 +1,4 @@
-const { Client, Interaction, InteractionType, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, Colors } = require('discord.js');
+const { Client, Interaction, InteractionType, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder, Colors, ActionRow } = require('discord.js');
 /**
  * @param {Client} client 
  * @param {Interaction} interaction
@@ -40,17 +40,36 @@ module.exports = async (client, interaction) => {
             };
 
             if(action == "invited-history") {
-                const invitedUsers = Object.values(await db.get("users"))
-                    .filter(u => u.joins?.map(j => j.by).includes(member.user.id) );
+                const dbusers = Object.values(await db.get("users"))
+                    .filter(u => u.joins?.map(j => j.by).includes(member.user.id))
+                
+                const memberInvites = await db.get(`users.${member.user.id}`);
+
                 let invites = [];
-                invitedUsers.forEach((u) => {
-                    u.joins
-                    .filter(j => j.by == member.user.id)
-                    .forEach(j => {
-                        Object.assign(j, { id: u.id });
-                        invites.push(j);
-                    });
-                });
+                for (let dbuser of dbusers) {
+                    for (let join of dbuser.joins.filter(j => j.by == member.user.id)) {
+                        let obj = join;
+                        obj.fake = dbuser.joins.map(j => j.at).indexOf(join.at) !== dbuser.joins.length - 1;
+                        
+                        obj.userId = dbuser.id;
+                        obj.user = client.users.cache.get(dbuser.id) || await client.users.fetch(dbuser.id).catch(() => '');
+                        invites.push(obj);
+                    } 
+                };
+
+                invites.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+
+                let pages = [];
+                let page = [];
+                let selectedPage = 0;
+
+                for (let invite of invites) {
+                    page.push(invite);
+                    if (page.length >= 15) {
+                        pages.push(page);
+                        page = [];
+                    };
+                }; if (page.length) pages.push(page);
 
                 let backButton = new ButtonBuilder()
                     .setCustomId(`invite-logger.info.${member.user.id}.${author.user.id}`)
@@ -59,88 +78,83 @@ module.exports = async (client, interaction) => {
                         fr: "Retour aux informations du membre",
                         en: "Back to the members infos"
                     }))
+                
+                let enabledButtons = [];
+                if (pages.length > 1) enabledButtons.push(nextPageButton);
+                if (pages.length > 2) enabledButtons.push(lastPageButton);
+                enabledButtons.push(backButton);
                 let backButtonActionRaw = new ActionRowBuilder()
-                    .addComponents([ backButton ])
-                    
-                let pages = [];
-                let page = [];
-                invites.sort((a,b) => b.at - a.at);
-                let userUpdatedIDs = [];
-                var definitiveInvites = [];
-                for(let j of invites) {
-                    let userDB = await db.get(`users.${j.id}`)
-                    if(interaction.guild.members.cache.has(j.id)) {
-                        var left = false;
-                        if(userDB.joins[userDB.joins.length-1].by !== member.user.id) var fake = true;
-                        else if(userUpdatedIDs.includes(j.id)) var fake = true;
-                        else {
-                            var fake = false;
-                            userUpdatedIDs.push(j.id);
-                        };
-                    } else { var fake = false; var left = true; };
-                    definitiveInvites.push({
-                        at: j.at,
-                        by: j.by,
-                        inviteCode: j.inviteCode,
-                        id: j.id,
-                        fake: fake,
-                        left: left
-                    })
-                };
-
-                for(let j of definitiveInvites) {
-                    page.push(j);
-                    if(page.length >= 20) {
-                        let resolvedPage = await Promise.all(page.map(async (join) => {
-                            let user = client.users.cache.get(join.id) || await client.users.fetch(join.id);
-                            const joinedTimestamp = `${new Date(join.at).getTime()}`.slice(0, -3);
-                            return `${join.left ? "❌" : join.fake ? "💩" : "✅"} ${user.toString()} - **${join.inviteCode}** - <t:${joinedTimestamp}:R>`;
-                        }));
-                        let pageEmbed = new EmbedBuilder()
-                            .setColor(Colors.Blue)
-                            .setAuthor({
-                                name: member.user.tag,
-                                iconURL: member.user.displayAvatarURL()
-                            }).setDescription(
-                                resolvedPage.join("\n") || translate({ fr: "❌ **Aucun**", en: "❌ **None**" })
-                            )
-                        pages.push(pageEmbed);
-                        page = [];
+                    .addComponents(enabledButtons)
+                
+                const message = await interaction.update({ embeds: [renderPage(pages[selectedPage])], components: [backButtonActionRaw] });
+                
+                while (!isNaN(selectedPage)) {
+                    try {
+                        await message.awaitMessageComponent({
+                            time: 60000,
+                            filter: (i) => i.isButton() && i.customId.startsWith("invite-logger.invited-history-page")
+                        }).then(async (i) => {
+                            selectedPage = parseInt(i.customId.split(".")[2]);
+                        });
+                        let btns = buttons(selectedPage);
+                        let actionrowBtns = [];
+                        if (selectedPage > 1) actionrowBtns.push(btns.firstPageButton);
+                        if (selectedPage > 0) actionrowBtns.push(btns.previousPageButton);
+                        if (pages.length - selectedPage > 1) actionrowBtns.push(btns.nextPageButton);
+                        if (pages.length - selectedPage > 2) actionrowBtns.push(btns.lastPageButton);
+                        actionrowBtns.push(backButton);
+                        let actionrow = new ActionRowBuilder()
+                            .addComponents(actionrowBtns)
+                        await message.edit({ embeds: [renderPage(pages[selectedPage])], components: [actionrow] }).catch(() => '');
+                    } catch {
+                        selectedPage = undefined;
+                        await message.edit({ embeds: [renderPage(pages[selectedPage])], components: [] }).catch(() => '');
                     };
                 };
-                
-                if(page.length > 0) {
-                    let resolvedPage = await Promise.all(page.map(async (join) => {
-                        let user = client.users.cache.get(join.id) || await client.users.fetch(join.id);
-                        const joinedTimestamp = `${new Date(join.at).getTime()}`.slice(0, -3);
-                        return `${join.left ? "❌" : join.fake ? "💩" : "✅"} ${user.toString()} - **${join.inviteCode}** - <t:${joinedTimestamp}:R>`
-                    }));
-                    let pageEmbed = new EmbedBuilder()
+
+                function renderPage(renderingPage) {
+                    return new EmbedBuilder()
                         .setColor(Colors.Blue)
                         .setAuthor({
                             name: member.user.tag,
                             iconURL: member.user.displayAvatarURL()
                         }).setDescription(
-                            resolvedPage.join("\n") || translate({ fr: "❌ **Aucun**", en: "❌ **None**" })
+                            renderingPage?.map(i => {
+                                let emoji = i.fake ? "💩" : !member.guild.members.cache.has(i.userId) ? "❌" : "✅";
+                                let timestampString = `${new Date(i.at).getTime()}`.slice(0, -3);
+                                let splitedText = [
+                                    emoji, i.user?.toString() || `<@${i.userId}>`, "-",
+                                    `**${i.inviteCode}**`, "-",
+                                    `<t:${timestampString}:R>`
+                                ];
+                                return splitedText.join(" ");
+                            }).join("\n") || client.translate({
+                                fr: "❌ ***Aucun membre invité***",
+                                en: "❌ ***No invited member***"
+                            })
                         )
-                    pages.push(pageEmbed);
+                };
+                function buttons(pageId) {
+                    return {
+                        firstPageButton: new ButtonBuilder()
+                            .setCustomId("invite-logger.invited-history-page.0")
+                            .setStyle(ButtonStyle.Primary)
+                            .setEmoji("⏪")
+                        , previousPageButton: new ButtonBuilder()
+                            .setCustomId("invite-logger.invited-history-page." + pageId-1)
+                            .setStyle(ButtonStyle.Primary)
+                            .setEmoji("⬅️")
+                        , nextPageButton: new ButtonBuilder()
+                            .setCustomId("invite-logger.invited-history-page." + pageId+1)
+                            .setStyle(ButtonStyle.Primary)
+                            .setEmoji("➡️")
+                        , lastPageButton: new ButtonBuilder()
+                            .setCustomId("invite-logger.invited-history-page." + pages.length-1)
+                            .setStyle(ButtonStyle.Primary)
+                            .setEmoji("⏩")
+                    }
                 };
 
-                if(definitiveInvites.length == 0) {
-                    pages.push(
-                        new EmbedBuilder()
-                            .setColor(Colors.Red)
-                            .setAuthor({
-                                name: member.user.tag,
-                                iconURL: member.user.displayAvatarURL()
-                            }).setDescription(client.translate({
-                                fr: `❌ - **${member.user.id == author.user.id ? "Vous n'avez" : member.user.toString() + "n'a"} invité aucun membre.**`,
-                                en: `❌ - **${member.user.id == author.user.id ? "You have not" : member.user.toString() + "has not"} invited any member.**`
-                            }))
-                    );
-                };
-
-                await interaction.update({ embeds: pages, components: [backButtonActionRaw] });
             } else if(action == "info") {
                 
                 const memberInvites = await db.get(`users.${member.user.id}`);
