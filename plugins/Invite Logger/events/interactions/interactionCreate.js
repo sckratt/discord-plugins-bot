@@ -176,8 +176,8 @@ module.exports = async (client, interaction) => {
                         .filter(u => u.joins.filter(j => j.by == member.user.id).length)
                         .forEach(u => lastInvitedMembers.push(u))
         
-                    lastInvitedMembers.sort((a,b) => b.joins[b.joins.length-1].at - a.joins[a.joins.length-1].at);
-                    
+                    lastInvitedMembers.sort((a, b) => new Date(b.joins[b.joins?.length - 1].at).getTime() - new Date(a.joins[a.joins.length - 1].at).getTime());
+            
                     for(let i=0; i<lastInvitedMembers.length; i++) {
                         const u = lastInvitedMembers[i];
                         const user = client.users.cache.get(u.id) || await client.users.fetch(u.id).catch(()=>'');
