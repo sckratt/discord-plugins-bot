@@ -162,7 +162,7 @@ module.exports = async (client, interaction) => {
                         .filter(u => u.joins.filter(j => j.by == member.user.id).length)
                         .forEach(u => lastInvitedMembers.push(u))
         
-                    lastInvitedMembers.sort((a,b) => b.joins[b.joins.length-1].at - a.join[a.join.length-1].at);
+                    lastInvitedMembers.sort((a,b) => b.joins[b.joins.length-1].at - a.joins[a.joins.length-1].at);
                     
                     for(let i=0; i<lastInvitedMembers.length; i++) {
                         const u = lastInvitedMembers[i];
