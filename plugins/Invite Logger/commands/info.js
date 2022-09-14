@@ -77,14 +77,14 @@ module.exports = {
                 .filter(u => u.joins.filter(j => j.by == member.user.id).length)
                 .forEach(u => lastInvitedMembers.push(u))
 
+            lastInvitedMembers.sort((a,b) => b.joins[b.joins.length-1].at - a.join[a.join.length-1].at);
+
             for(let i=0; i<lastInvitedMembers.length; i++) {
                 const u = lastInvitedMembers[i];
                 const user = client.users.cache.get(u.id) || await client.users.fetch(u.id).catch(()=>'');
                 const type = interaction.guild.members.cache.has(u.id) ? u.joins[u.joins.length-1].by == member.user.id ? "normal" : "fake" : "left";
                 lastInvitedMembers[i] = { mInvites: u, user, type };
             };
-
-            lastInvitedMembers.sort((a,b) => b.joins[b.joins.length-1].at - a.join[a.join.length-1].at);
 
             const embed = new EmbedBuilder()
                 .setColor(Colors.Blue)
