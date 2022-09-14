@@ -14,6 +14,7 @@ module.exports = async (client, interaction) => {
             const subcommandname = interaction.options.getSubcommand();
             const subcommand = client.commands.find(cmd => cmd.name == subcommandname && cmd.commandname == interaction.commandName);
             if(!subcommand) return;
+            if(!await basedb.has(`plugins.${subcommand.commandname}`)) await basedb.set(`plugins.${subcommand.commandname}`, true);
             if(!await basedb.get(`plugins.${subcommand.commandname}`)) return;
             if(typeof subcommand.execute == "function") subcommand.execute(client, interaction);
         } catch {
@@ -37,7 +38,8 @@ module.exports = async (client, interaction) => {
                 try {
                     resp = await pluginChooser();
                     if(!resp.resp || !resp.i) return;
-                    await db.set(`plugins.${resp.resp}`, action == "enable");let modules = [{
+                    await db.set(`plugins.${resp.resp}`, action == "enable");
+                    let modules = [{
                         name: "📄 » Base",
                         enabled: true
                     }];
