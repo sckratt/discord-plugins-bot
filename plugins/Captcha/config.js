@@ -1,7 +1,7 @@
 module.exports = {
     captchaRoleId: "",
     autokickBots: true,
-    botsRoleIds: [""],
+    botsRoleIds: [],
     validUserRoleIds: [],
     notifsChannelId: "",
     message: {

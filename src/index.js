@@ -40,8 +40,11 @@ client.utils = {
     }
 };
 
-require('./Handler/modules');
-require('./Handler/events.js').loadEvents(client);
-require('./Handler/events.js').loadPluginsEvents(client);
-require('./Handler/events').pushEvents(client);
-client.login(process.env.TOKEN);
+
+require('./Handler/modulesState').then(() => {
+    require('./Handler/modules');
+    require('./Handler/events.js').loadEvents(client);
+    require('./Handler/events.js').loadPluginsEvents(client);
+    require('./Handler/events').pushEvents(client);
+    client.login(process.env.TOKEN);
+});
