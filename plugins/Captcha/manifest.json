@@ -1,0 +1,9 @@
+{
+    "command_name": "captcha",
+    "name": "Captcha",
+    "emoji": "🚫",
+    "description": "Captcha for avoiding fake accounts",
+    "description_localizations": {
+        "fr": "Captcha pour éviter les faux comptes"
+    }
+}

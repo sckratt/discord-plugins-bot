@@ -56,6 +56,7 @@ function loadEvents(client, dirname = path.join(__dirname, "../events")) {
 async function pushEvents(client) {
     const db = client.db("base");
     for(let event of client.events) {
+        if(!await db.has(`plugins.${event.pluginName}`)) await db.set(`plugins.${event.pluginName}`, true)
         const pluginActive = await db.get(`plugins.${event.pluginName}`);
         client.on(event.name, async (...args) => {
             if(event.pluginName && !pluginActive) return;
